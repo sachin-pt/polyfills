@@ -2,7 +2,7 @@ const string = `
     <html>
         <body>
             <div>
-                <img data:x="=test a'b'c <sachin>" alt='an"df' alt src="/def/abc.png?abc" abc="def" disabled >
+                <img  data:x="=test a'b'c <sachin>" alt='an"df' alt src="/def/abc.png?abc" abc="def" disabled >
                 <br>
                 <b>
                     hello 'mr' "sachin". a = b \\ / > ax <a href="abc.js?abc=def">he</a>
@@ -67,14 +67,20 @@ const parser = str => {
   let token = ''
   let tokenType = 'text'
   let length = str.length
-  function handleEndNodes () {
-    if (stack.length >= 2) {
-      let openNode = stack.pop()
-      const lastNode = stack[stack.length - 1]
-      lastNode.appendChild(openNode)
+  for (let i = 0; i < length; i++) {
+    const char = str[i]
+    if (ignoreChars[tokenType].indexOf(char) >= 0) {
+      continue
     }
+    if (['<', '>', ' ', '/', '"', "'"].indexOf(char) >= 0 && whiteListedChars[tokenType].indexOf(char) < 0) {
+      processToken(char)
+      resetToken(char)
+      continue
+    }
+    token += char
   }
-  function resetToken(char) {
+
+  function processToken(char) {
     token = token.trim()
     if (token) {
       const item = stack[stack.length - 1] || new Node()
@@ -99,21 +105,22 @@ const parser = str => {
     if (char === '>' && item && (openTags.indexOf(item.name) >= 0 || tokenType === 'endNode')) {
       handleEndNodes()
     }
+  }
+
+  function resetToken (char) {
     const nextTokenType = tokenTypeMap[char](tokenType)
     tokenType = nextTokenType
     token = ''
   }
-  for (let i = 0; i < length; i++) {
-    const char = str[i]
-    if (ignoreChars[tokenType].indexOf(char) >= 0) {
-      continue
+
+  function handleEndNodes () {
+    if (stack.length >= 2) {
+      let openNode = stack.pop()
+      const lastNode = stack[stack.length - 1]
+      lastNode.appendChild(openNode)
     }
-    if (['<', '>', ' ', '/', '"', "'"].indexOf(char) >= 0 && whiteListedChars[tokenType].indexOf(char) < 0) {
-      resetToken(char)
-      continue
-    }
-    token += char
   }
+
   return stack
 }
 parser(string)
