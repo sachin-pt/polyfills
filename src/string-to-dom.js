@@ -1,18 +1,19 @@
-var string = `
+const string = `
     <html>
         <body>
             <div>
-                <img src="abc.png" abc="def" disabled>
+                <img data:x="=test a'b'c <sachin>" alt='an"df' alt src="/def/abc.png?abc" abc="def" disabled >
                 <br>
                 <b>
-                    hello world. a = b
+                    hello 'mr' "sachin". a = b \\ / > ax <a href="abc.js?abc=def">he</a>
                 </b>
             </div>
         </body>
+        <x>sdfsdfsd<br><br></x>
     </html>
 `
 
-var openTags = ['br', 'img']
+const openTags = ['br', 'img']
 class Node {
   constructor (name, type = 'node') {
     this.name = name
@@ -34,15 +35,34 @@ class Node {
   }
 }
 
-var tokenTypeMap = {
-  " ": () => 'attrName',
+const tokenTypeMap = {
+  ' ': () => 'attrName',
   '<': () => 'node',
-  "/": () => 'endNode',
+  '/': () => 'endNode',
   '>': () => 'text',
-  "\"": (current) => current !== 'attrVal' ? 'attrVal' : 'node'
+  "'": current => current !== 'attrVal1' ? 'attrVal1' : 'node',
+  '"': (current) => current !== 'attrVal' ? 'attrVal' : 'node'
 }
 
-var parser = str => {
+const whiteListedChars = {
+  text: [' ', '>', '/', '"', '=', "'"],
+  attrVal: [' ', '>', '/', '<', '=', "'"],
+  attrVal1: [' ', '>', '/', '<', '=', '"'],
+  node: [],
+  endNode: [],
+  attrName: []
+}
+
+const ignoreChars = {
+  attrVal: [],
+  attrVal1: [],
+  attrName: ['='],
+  node: ['='],
+  endNode: ['='],
+  text: []
+}
+
+const parser = str => {
   let stack = []
   let token = ''
   let tokenType = 'text'
@@ -67,6 +87,7 @@ var parser = str => {
           item.setAttribute(token)
           break
         case 'attrVal':
+        case 'attrVal1':
           item.setAttributeVal(token)
           break
         case 'text':
@@ -84,10 +105,10 @@ var parser = str => {
   }
   for (let i = 0; i < length; i++) {
     const char = str[i]
-    if (char === '=' && tokenType !== 'text') {
+    if (ignoreChars[tokenType].indexOf(char) >= 0) {
       continue
     }
-    if (['<', '>'].indexOf(char) >= 0 || ([' ', '/', '"'].indexOf(char) >= 0 && tokenType !== 'text')) {
+    if (['<', '>', ' ', '/', '"', "'"].indexOf(char) >= 0 && whiteListedChars[tokenType].indexOf(char) < 0) {
       resetToken(char)
       continue
     }
@@ -96,8 +117,3 @@ var parser = str => {
   return stack
 }
 parser(string)
-// space -> attrName
-// < -> node -> new node added
-// > -> text -> find attrs end them, find current node end it
-// " -> current !== 'val' ? 'val' : node
-//
