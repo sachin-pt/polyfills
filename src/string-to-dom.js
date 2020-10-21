@@ -21,16 +21,16 @@ class Node {
     this.attrs = []
     this.children = []
   }
-  setAttribute(name, value) {
-    this.attrs.push({name, value})
+  setAttribute (name, value) {
+    this.attrs.push({ name, value })
   }
-  setAttributeVal(val) {
+  setAttributeVal (val) {
     const lastAttr = this.attrs[this.attrs.length - 1]
     if (lastAttr) {
       lastAttr.value = val
     }
   }
-  appendChild(child) {
+  appendChild (child) {
     this.children.push(child)
   }
 }
@@ -80,7 +80,7 @@ const parser = str => {
     token += char
   }
 
-  function processToken(char) {
+  function processToken (char) {
     token = token.trim()
     if (token) {
       const item = stack[stack.length - 1] || new Node()
