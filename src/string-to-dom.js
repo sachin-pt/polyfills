@@ -16,14 +16,14 @@ const string = `
     font-display: swap;
     font-weight: 400;
     font-style: normal;
-    src: url('//c.housingcdn.com/s/assets/regular.6b0b2176.woff2');
+    src: url('//c.sdfsdf.com/s/assets/regular.6b0b2176.woff2');
   }
   @font-face {
     font-family: 'Rubik';
     font-display: swap;
     font-weight: 500;
     font-style: normal;
-    src: url('//c.housingcdn.com/s/assets/medium.aea082bc.woff2');
+    src: url('//c.sdfsdfd.com/s/assets/medium.aea082bc.woff2');
   }
 </style>
 </head>
